@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<string name="welcome">Welcome to %s</string>
+	<string name="login">Login</string>
+	<string name="logout">Logout</string>
+	<string name="login_form_username">Your Mobitalents username</string>
+	<string name="login_form_password">Your password</string>
+</resources>

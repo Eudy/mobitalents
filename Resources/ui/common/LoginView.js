@@ -79,7 +79,7 @@ function LoginView() {
 	hView.add(facebookButton);
 	
 	var cameraButton = Button("Camera");
-	cameraButton.addEventlistener('click', function(e) {
+	cameraButton.addEventListener('click', function(e) {
 		Ti.Media.showCamera({
 			allowEditing: false,
 			mediaTypes: [Ti.Media.MEDIA_TYPE_VIDEO],

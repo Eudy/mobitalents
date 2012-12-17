@@ -78,6 +78,19 @@ function LoginView() {
 
 	hView.add(facebookButton);
 	
+	var cameraButton = Button("Camera");
+	cameraButton.addEventlistener('click', function(e) {
+		Ti.Media.showCamera({
+			allowEditing: false,
+			mediaTypes: [Ti.Media.MEDIA_TYPE_VIDEO],
+			videoMaximumDuration: 60000,
+			success: function(event) {
+				
+			}
+		})
+	});
+	self.add(cameraButton);
+	
 	self.add(hView);
 	
 	var footer = Ti.UI.createView({

@@ -80,14 +80,31 @@ function LoginView() {
 	
 	var cameraButton = Button("Camera");
 	cameraButton.addEventListener('click', function(e) {
-		Ti.Media.showCamera({
-			allowEditing: false,
-			mediaTypes: [Ti.Media.MEDIA_TYPE_VIDEO],
-			videoMaximumDuration: 60000,
-			success: function(event) {
-				
-			}
-		})
+	    var intent = Titanium.Android.createIntent({ action: 'android.media.action.VIDEO_CAPTURE' });
+	    Titanium.Android.currentActivity.startActivityForResult(intent, function(e) {
+	        if (e.error) {
+	            Ti.UI.createNotification({
+	                duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+	                message: 'Error: ' + e.error
+	            }).show();
+	        } else {
+	            if (e.resultCode === Titanium.Android.RESULT_OK) {
+	                videoUri = e.intent.data;
+	                Ti.UI.createNotification({
+	                    duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+	                    message: 'Video captured; now share or save it!'
+	                }).show();
+	                // note that this isn't a physical file! it's a URI in to the MediaStore.
+	                shareButton.visible = true;
+	                saveButton.visible = true;
+	            } else {
+	                Ti.UI.createNotification({
+	                    duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+	                    message: 'Canceled/Error? Result code: ' + e.resultCode
+	                }).show();
+	            }
+	        }
+	    });
 	});
 	self.add(cameraButton);
 	

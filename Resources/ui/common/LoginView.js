@@ -4,7 +4,7 @@ function LoginView() {
 	var Button = require('ui/mobi/Button');
 		
 	//create object instance, a parasitic subclass of Observable
-	var self = Ti.UI.createView({
+	var self = Ti.UI.createScrollView({
 		top: '7.5%',
 		left: '5%',
 		width: '90%',

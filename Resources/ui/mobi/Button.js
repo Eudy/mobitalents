@@ -43,20 +43,6 @@ function Button(buttonText, buttonWidth, buttonBackgroundColor, marginTop, margi
 		textAlign: 'center'
 	});
 	
-	var animation = Ti.UI.createAnimation();
-	animation.backgroundColor = Theme.selectedButtonBackgroundColor;
-	animation.top = 10;
-	animation.duration = 100;
-	animation.addEventListener('complete', function() {
-		animation.backgroundColor = Theme.buttonBackgroundColor;
-		animation.top = 0;
-		self.animate(animation);
-	});
-	
-	self.addEventListener('click', function(e){
-		self.animate(animation);
-	});
-	
 	self.add(label);
 	
 	return self;

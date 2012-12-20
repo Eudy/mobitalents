@@ -61,7 +61,7 @@ function LoginView() {
 	var loginButton = Button("Connexion");
 	// Connexion
 	loginButton.addEventListener('click', function(e) {
-		self.fireEvent('loginSuccessful', {
+		Ti.App.fireEvent('loginSuccessful', {
 			
 		});
 	});

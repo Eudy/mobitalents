@@ -26,8 +26,9 @@ if (Ti.version < 1.8 ) {
 	//considering tablet to have one dimension over 900px - this is imperfect, so you should feel free to decide
 	//yourself what you consider a tablet form factor for android
 	var isTablet = osname === 'ipad' || (osname === 'android' && (width > 899 || height > 899));
-	
+
 	var Window;
+	/*
 	if (isTablet) {
 		Window = require('ui/tablet/ApplicationWindow');
 	}
@@ -41,5 +42,23 @@ if (Ti.version < 1.8 ) {
 			Window = require('ui/handheld/ApplicationWindow');
 		}
 	}
-	new Window().open();
+	*/
+	LoginWindow = require('ui/common/LoginWindow');
+	BrowseWindow = require('ui/common/BrowseWindow');
+		
+	// Lorsque la connexion est réussie
+	Ti.App.addEventListener('loginSuccessful', function(e) {
+		Ti.API.info('Login Successful');
+		Window = new BrowseWindow().open();
+	});
+	
+	// Déconnexion
+	Ti.App.addEventListener('logoutSuccessful', function(e) { 
+		Ti.API.info('Logout Successful');
+		Window = new LoginWindow().open();
+	});
+	
+	// De base écran de Login
+	Window = new LoginWindow();
+	Window.open();
 })();

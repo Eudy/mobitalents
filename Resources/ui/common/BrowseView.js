@@ -22,8 +22,10 @@ function BrowseView() {
 	
 	var logoutButton = Button("Déconnexion", '39%');
 	logoutButton.addEventListener('click', function() {
-		Ti.App.info('Click logout');
-		self.fireEvent('logoutSuccessful', {} );
+		Ti.API.info('Click on logout');
+		Ti.App.fireEvent('logoutSuccessful', {
+			
+		});
 	});
 	hView.add(logoutButton);
 	

@@ -16,15 +16,28 @@ function ApplicationWindow() {
 	var loginView = new LoginView();
 	self.add(loginView);
 	
+	var browseView = new BrowseView();
+	var browseWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		navBarHidden:true,
+		exitOnClose:true
+	});
+	
+	browseWindow.add(browseView);
+		
+	// Lorsque la connexion est réussie
 	loginView.addEventListener('loginSuccessful', function(e) {
-		var browseView = new BrowseView();
-		var browseWindow = Ti.UI.createWindow({
-			backgroundColor: Theme.backgroundColor,
-			navBarHidden:true,
-			exitOnClose:true
-		});
-		browseWindow.add(browseView);
+		var current = Titanium.UI.currentWindow;
+		current.close();
 		browseWindow.open();
+	});
+	
+	// Déconnexion
+	browseView.addEventListener('logoutSuccessful', function(e) {
+		var current = Titanium.UI.currentWindow;
+		current.close();
+		Ti.API.log('Logout Successful');
+		self.open();
 	});
 	
 	return self;

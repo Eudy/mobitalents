@@ -14,7 +14,13 @@ function ApplicationWindow() {
 		
 	//construct UI
 	var loginView = new LoginView();
-	self.add(loginView);
+	var loginWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		navBarHidden:true,
+		exitOnClose:true
+	});
+	loginWindow.add(loginView);
+	loginWindow.open();
 	
 	var browseView = new BrowseView();
 	var browseWindow = Ti.UI.createWindow({
@@ -22,18 +28,19 @@ function ApplicationWindow() {
 		navBarHidden:true,
 		exitOnClose:true
 	});
+	
+	browseWindow.add(browseView);	
 		
 	// Lorsque la connexion est réussie
-	loginView.addEventListener('loginSuccessful', function(e) {
-		browseWindow.add(browseView);
+	Ti.App.addEventListener('loginSuccessful', function(e) {
+		Ti.API.info('Login Successful')
 		browseWindow.open();
 	});
 	
 	// Déconnexion
-	browseView.addEventListener('logoutSuccessful', function(e) {
-		Ti.App.info('Fire logout');
-		self.add(loginView);
-		self.open();
+	Ti.App.addEventListener('logoutSuccessful', function(e) { 
+		Ti.API.info('Logout Successful');
+		loginWindow.open();
 	});
 	
 	return self;

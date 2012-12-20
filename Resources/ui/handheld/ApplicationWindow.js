@@ -27,6 +27,8 @@ function ApplicationWindow() {
 		browseWindow.open();
 	});
 	
+	// TEST
+	
 	return self;
 }
 

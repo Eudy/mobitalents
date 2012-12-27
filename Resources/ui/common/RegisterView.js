@@ -1,8 +1,8 @@
 //FirstView Component Constructor
-function LoginView() {
+function RegisterView(winClose, winOpen) {
 	var Theme = require('ui/mobi/Theme');
 	var Button = require('ui/mobi/Button');
-		
+	
 	//create object instance, a parasitic subclass of Observable
 	var self = Ti.UI.createScrollView({
 		top: '7.5%',
@@ -12,16 +12,6 @@ function LoginView() {
 		layout: 'vertical'
 	});
 	
-	var logo = Ti.UI.createImageView({
-		url: '/mgt-logo.png',
-		width: '100%',
-		bottom: '5%'
-	});
-	self.add(logo);	
-	
-	
-	
-	
 	//create object instance, a parasitic subclass of Observable
 	var hView = Ti.UI.createView({
 		top: '5%',
@@ -29,22 +19,45 @@ function LoginView() {
 		height: '80',
 		layout: 'horizontal'
 	});	
-	
-	
-	
-	
-	var loginField = Ti.UI.createTextField({
+		
+	var pseudoField = Ti.UI.createTextField({
 		color: Theme.textColor,
 		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
 		width: '100%',
 		height: '80',
 		top: '5%',
-		hintText: 'Mon identifiant Mobitalents',
+		hintText: 'Pseudo',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT
 	})
 	
-	self.add(loginField);
+	self.add(pseudoField);
 
+	var villeField = Ti.UI.createTextField({
+		color: Theme.textColor,
+		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+		width: '100%',
+		height: '80',
+		top: '1%',
+		bottom: '1%',
+		hintText: 'Ville',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+	})
+	
+	self.add(villeField);
+	
+	var adressMailField = Ti.UI.createTextField({
+		color: Theme.textColor,
+		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+		width: '100%',
+		height: '80',
+		top: '1%',
+		bottom: '1%',
+		hintText: 'Adresse mail',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+	})
+	
+	self.add(adressMailField);
+	
 	var passwordField = Ti.UI.createTextField({
 		color: Theme.textColor,
 		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
@@ -59,35 +72,29 @@ function LoginView() {
 	
 	self.add(passwordField);
 	
-	var loginButton = Button("Connexion");
+	
+
+	
+	
+	
+	var returnButton = Button("RETOUR");
+	
+	self.add(returnButton);
+	
+	var validateButton = Button("VALIDER");
 	// Connexion
-	loginButton.addEventListener('click', function(e) {
-		logPass=false;
-		if(loginField.value != '' && passwordField != ''){
-			logPass=connexi(loginField, passwordField)
-		}
-		else{
-			alert("Veuillez renseigner tous les champs")
-		}
-		//logPass = true;
-		if(logPass == true){			
-		self.fireEvent('loginSuccessful', {
+	validateButton.addEventListener('click', function(e) {
+		var validate=validateForm(pseudoField, villeField, adressMailField, passwordField);
+		if(validate == true){
 			
-		});
-		}
-	});
-	self.add(loginButton);
-	
-	var createAccountButton = Button("Créer un compte Mobitalent");
-	createAccountButton.addEventListener('click', function(e) {
-		self.fireEvent('createAccountSuccessful', {
+			saveUser(pseudoField, villeField, adressMailField, passwordField);
 			
-		});
+		}
+		
 	});
+	self.add(validateButton);
 	
-	self.add(createAccountButton);
-	
-	
+//	self.add(hView);
 	
 	
 	
@@ -148,24 +155,42 @@ function LoginView() {
 	return self;
 }
 
-function connexi(login, password){
+function validateForm(pseudoField, villeField, adressMailField, passwordField){
+	alert(pseudoField.value);
+	
+	if (pseudoField.value == '' || villeField.value == '' || adressMailField.value == '' || passwordField.value == ''){
+		validateForm = false;
+		alert("veuillez remplir tous les champs");
+	}
+	else
+		validateForm = true;
+	
+	
+	return validateForm;
+}
+
+function saveUser(pseudo, ville, adressMail, password){
 	var db = Ti.Database.open('MobileTalent');	
-	var rows = db.execute('SELECT userPSEUDO, userPASSW FROM users');
-	logPass=false;
+	var rows = db.execute('SELECT userPSEUDO FROM users');
+	existPseudo=false;
 	while (rows.isValidRow()) {
-		/*alert("pseudo "+rows.fieldByName('userPSEUDO')+" passW="+rows.fieldByName('userPASSW'));
-		alert("pseudo1 "+login.value+" passW1="+password.value);*/
-			if(login.value == rows.fieldByName('userPSEUDO') && password.value == rows.fieldByName('userPASSW'))
-				logPass=true;
+			if(pseudo.value == rows.fieldByName('userPSEUDO'))
+				existPseudo=true;
 			rows.next();
 		}
 		rows.close();
-	
+	if(existPseudo==false){
+		db.execute('INSERT INTO users (userPSEUDO, userVILLE, userPASSW, userMAIL) values (?, ?, ?, ?)', pseudo.value, ville.value, adressMail.value, password.value);
+		
+		alert("fait");
+	}
 	db.close();
-	return logPass;
 }
 
 
 
 
-module.exports = LoginView;
+
+
+
+module.exports = RegisterView;

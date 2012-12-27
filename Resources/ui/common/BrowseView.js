@@ -1,7 +1,20 @@
 // Parcourir les vidéos
-function BrowseView() {
+function BrowseView(winClose,winOpen) {
 	var Theme = require('ui/mobi/Theme');
 	var Button = require('ui/mobi/Button');
+	var LoginView = require('ui/common/LoginView');
+	var SettingView = require('ui/common/SettingView');
+	
+	var loginView = new LoginView();
+	var loginWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		navBarHidden:true,
+		exitOnClose:true
+	});
+	
+	
+	
+	
 		
 	//create object instance, a parasitic subclass of Observable
 	var self = Ti.UI.createScrollView({
@@ -22,12 +35,23 @@ function BrowseView() {
 	
 	var logoutButton = Button("Déconnexion", '39%');
 	logoutButton.addEventListener('click', function() {
-		Ti.App.info('Click logout');
-		self.fireEvent('logoutSuccessful', {} );
+	loginWindow.open();
+	winClose.close();
+		
 	});
 	hView.add(logoutButton);
 	
 	var settingsButton = Button("Gérer mon compte", '59%', null, null, '2%');
+	settingsButton.addEventListener('click', function(e) {
+		self.fireEvent('settingSuccessful', {
+			
+		});
+	});
+	
+	
+	
+	
+	
 	hView.add(settingsButton);
 	
 	self.add(hView);

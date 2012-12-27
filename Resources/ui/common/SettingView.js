@@ -1,8 +1,9 @@
 //FirstView Component Constructor
-function LoginView() {
+	
+function SettingView(win, browseWindow) {
 	var Theme = require('ui/mobi/Theme');
 	var Button = require('ui/mobi/Button');
-		
+	
 	//create object instance, a parasitic subclass of Observable
 	var self = Ti.UI.createScrollView({
 		top: '7.5%',
@@ -12,16 +13,6 @@ function LoginView() {
 		layout: 'vertical'
 	});
 	
-	var logo = Ti.UI.createImageView({
-		url: '/mgt-logo.png',
-		width: '100%',
-		bottom: '5%'
-	});
-	self.add(logo);	
-	
-	
-	
-	
 	//create object instance, a parasitic subclass of Observable
 	var hView = Ti.UI.createView({
 		top: '5%',
@@ -29,65 +20,99 @@ function LoginView() {
 		height: '80',
 		layout: 'horizontal'
 	});	
-	
-	
-	
-	
-	var loginField = Ti.UI.createTextField({
+		
+	var pseudoField = Ti.UI.createTextField({
 		color: Theme.textColor,
 		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
 		width: '100%',
 		height: '80',
 		top: '5%',
-		hintText: 'Mon identifiant Mobitalents',
+		hintText: 'Modifier Pseudo',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT
 	})
 	
-	self.add(loginField);
+	self.add(pseudoField);
 
-	var passwordField = Ti.UI.createTextField({
+	var villeField = Ti.UI.createTextField({
 		color: Theme.textColor,
 		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
 		width: '100%',
 		height: '80',
 		top: '1%',
 		bottom: '1%',
-		hintText: 'Mon mot de passe',
+		hintText: 'Modifier ville',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+	})
+	
+	self.add(villeField);
+	
+	
+	
+	var oldPasswordField = Ti.UI.createTextField({
+		color: Theme.textColor,
+		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+		width: '100%',
+		height: '80',
+		top: '1%',
+		bottom: '1%',
+		hintText: 'Ancien Mon mot de passe',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
 		passwordMask: true
 	})
 	
-	self.add(passwordField);
+	self.add(oldPasswordField);
 	
-	var loginButton = Button("Connexion");
+	var newPasswordField = Ti.UI.createTextField({
+		color: Theme.textColor,
+		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+		width: '100%',
+		height: '80',
+		top: '1%',
+		bottom: '1%',
+		hintText: 'Nouveau Mon mot de passe',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+		passwordMask: true
+	})
+	
+	self.add(newPasswordField);
+	
+	
+	
+	
+	var adressMailField = Ti.UI.createTextField({
+		color: Theme.textColor,
+		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+		width: '100%',
+		height: '80',
+		top: '1%',
+		bottom: '1%',
+		hintText: 'Modifier Adresse mail',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+	})
+	
+	self.add(adressMailField);
+
+	
+	
+	
+	var cancelButton = Button("ANNULER");
+	// Retour
+	cancelButton.addEventListener('click', function(e) {
+		win.close();
+		browseWindow.open();
+	});
+	self.add(cancelButton);
+	
+	var validateButton = Button("VALIDER");
 	// Connexion
-	loginButton.addEventListener('click', function(e) {
-		logPass=false;
-		if(loginField.value != '' && passwordField != ''){
-			logPass=connexi(loginField, passwordField)
-		}
-		else{
-			alert("Veuillez renseigner tous les champs")
-		}
-		//logPass = true;
-		if(logPass == true){			
-		self.fireEvent('loginSuccessful', {
-			
-		});
-		}
-	});
-	self.add(loginButton);
-	
-	var createAccountButton = Button("Créer un compte Mobitalent");
-	createAccountButton.addEventListener('click', function(e) {
-		self.fireEvent('createAccountSuccessful', {
+	validateButton.addEventListener('click', function(e) {
+		self.fireEvent('testSuccessful', {
 			
 		});
 	});
+	self.add(validateButton);
 	
-	self.add(createAccountButton);
-	
-	
+//	self.add(hView);
 	
 	
 	
@@ -148,24 +173,4 @@ function LoginView() {
 	return self;
 }
 
-function connexi(login, password){
-	var db = Ti.Database.open('MobileTalent');	
-	var rows = db.execute('SELECT userPSEUDO, userPASSW FROM users');
-	logPass=false;
-	while (rows.isValidRow()) {
-		/*alert("pseudo "+rows.fieldByName('userPSEUDO')+" passW="+rows.fieldByName('userPASSW'));
-		alert("pseudo1 "+login.value+" passW1="+password.value);*/
-			if(login.value == rows.fieldByName('userPSEUDO') && password.value == rows.fieldByName('userPASSW'))
-				logPass=true;
-			rows.next();
-		}
-		rows.close();
-	
-	db.close();
-	return logPass;
-}
-
-
-
-
-module.exports = LoginView;
+module.exports = SettingView;

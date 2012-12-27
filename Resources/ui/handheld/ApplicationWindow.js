@@ -4,6 +4,7 @@ function ApplicationWindow() {
 	var Theme = require('ui/mobi/Theme');
 	var LoginView = require('ui/common/LoginView');
 	var BrowseView = require('ui/common/BrowseView');
+	var RegisterView = require('ui/common/RegisterView');
 		
 	//create component instance
 	var self = Ti.UI.createWindow({
@@ -16,18 +17,40 @@ function ApplicationWindow() {
 	var loginView = new LoginView();
 	self.add(loginView);
 	
+	var browseView = new BrowseView();
+	var browseWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		navBarHidden:true,
+		exitOnClose:true
+	});
+	
+	var RegisterView = new RegisterView();
+	var RegisterWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		navBarHidden:true,
+		exitOnClose:true
+	});
+		
+	// Lorsque la connexion est réussie
 	loginView.addEventListener('loginSuccessful', function(e) {
-		var browseView = new BrowseView();
-		var browseWindow = Ti.UI.createWindow({
-			backgroundColor: Theme.backgroundColor,
-			navBarHidden:true,
-			exitOnClose:true
-		});
 		browseWindow.add(browseView);
 		browseWindow.open();
 	});
 	
-	// TEST
+	// formulaire d'inscription
+	RegisterView.addEventListener('createAccountSuccessful', function(e) {
+		RegisterWindow.add(RegisterView);
+		RegisterWindow.open();
+	});
+	
+	
+	
+	// Déconnexion
+	browseView.addEventListener('logoutSuccessful', function(e) {
+		Ti.App.info('Fire logout');
+		self.add(loginView);
+		self.open();
+	});
 	
 	return self;
 }

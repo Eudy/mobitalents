@@ -69,7 +69,7 @@ function LoginView() {
 		else{
 			alert("Veuillez renseigner tous les champs")
 		}
-		//logPass = true;
+	//	logPass = true;
 		if(logPass == true){			
 		self.fireEvent('loginSuccessful', {
 			
@@ -87,6 +87,14 @@ function LoginView() {
 	
 	self.add(createAccountButton);
 	
+	var videoButton = Button("video");
+	videoButton.addEventListener('click', function(e) {
+		self.fireEvent('videoSuccessful', {
+			
+		});
+	});
+	
+	self.add(videoButton);
 	
 	
 	

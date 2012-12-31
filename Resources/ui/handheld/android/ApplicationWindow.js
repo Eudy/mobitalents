@@ -5,16 +5,17 @@ function ApplicationWindow() {
 	var LoginView = require('ui/common/LoginView');
 	var BrowseView = require('ui/common/BrowseView');
 	var RegisterView = require('ui/common/RegisterView');
-	var TestView = require('ui/common/TestView');
+	//var TestView = require('ui/common/TestView');
 	var SettingView = require('ui/common/SettingView');	
+	var RecordVideoView = require('ui/common/RecordVideoView');	
 	var db = Ti.Database.open('MobileTalent');
 db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPSEUDO TEXT, userVILLE INTEGER, userPASSW TEXT, userMAIL TEXT)");
 
 	//create component instance
 	var self = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
-		navBarHidden:true,
-		exitOnClose:true
+		//navBarHidden:true,
+		//exitOnClose:true
 	});
 		
 	//construct UI
@@ -24,8 +25,8 @@ db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPS
 	
 	var browseWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
-		navBarHidden:true,
-		exitOnClose:true
+		//navBarHidden:true,
+		//exitOnClose:true
 	});
 	
 	var browseView = new BrowseView(browseWindow, self);
@@ -33,8 +34,8 @@ db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPS
 	
 	var registerWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
-		navBarHidden:true,
-		exitOnClose:true
+		//navBarHidden:true,
+		//exitOnClose:true
 	});
 	
 	
@@ -49,8 +50,8 @@ db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPS
 	
 	var settingWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
-		navBarHidden:true,
-		exitOnClose:false
+		//navBarHidden:true,
+	//	exitOnClose:false
 	});
 	var settingView = new SettingView(settingWindow, browseWindow);
 	
@@ -69,12 +70,32 @@ db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPS
 		registerWindow.open();
 	});
 	
-	var testView = new TestView();
+	var recordView = new RecordVideoView();
+	var recordWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		//navBarHidden:true,
+	//	exitOnClose:true
+	});
+	
+	
+	loginView.addEventListener('videoSuccessful', function(e) {
+		//alert('ICI2');
+		recordWindow.add(recordView);
+		recordWindow.open();
+	});
+	
+	browseView.addEventListener('videoSuccessful', function(e) {
+		//alert('ICI2');
+		recordWindow.add(recordView);
+		recordWindow.open();
+	});
+	
+	/*var testView = new TestView();
 	var testWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
 		navBarHidden:true,
 		exitOnClose:true
-	});
+	});*/
 	
 	registerView.addEventListener('testSuccessful', function(e) {
 		//alert('ICI2');
@@ -82,12 +103,12 @@ db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPS
 		testWindow.open();
 	});
 	
-	testView.addEventListener('logoutSuccessful', function(e) {
+	/*testView.addEventListener('logoutSuccessful', function(e) {
 		alert('ICI2');
 		//registerWindow.close();
 		registerWindow.add(registerView);
 		registerWindow.show();
-	});
+	});*/
 	
 	
 	

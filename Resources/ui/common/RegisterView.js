@@ -1,8 +1,15 @@
 //FirstView Component Constructor
+
+var createProfil = {
+	reussi: false,
+	envoie:'idl'
+};
 function RegisterView(winClose, winOpen) {
 	var Theme = require('ui/mobi/Theme');
 	var Button = require('ui/mobi/Button');
-	
+	var LoginView = require('ui/common/LoginView');
+	var InfoUser = require('ui/mobi/InfoUser');	
+
 	//create object instance, a parasitic subclass of Observable
 	var self = Ti.UI.createScrollView({
 		top: '7.5%',
@@ -27,6 +34,7 @@ function RegisterView(winClose, winOpen) {
 		height: '80',
 		top: '5%',
 		hintText: 'Pseudo',
+		value:'',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT
 	})
 	
@@ -40,7 +48,8 @@ function RegisterView(winClose, winOpen) {
 		top: '1%',
 		bottom: '1%',
 		hintText: 'Ville',
-		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+		value:'',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT
 	})
 	
 	self.add(villeField);
@@ -53,7 +62,8 @@ function RegisterView(winClose, winOpen) {
 		top: '1%',
 		bottom: '1%',
 		hintText: 'Adresse mail',
-		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+		value:'',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT
 	})
 	
 	self.add(adressMailField);
@@ -67,30 +77,39 @@ function RegisterView(winClose, winOpen) {
 		bottom: '1%',
 		hintText: 'Mon mot de passe',
 		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+		value:'',
 		passwordMask: true
 	})
 	
 	self.add(passwordField);
 	
-	
-
-	
-	
-	
 	var returnButton = Button("RETOUR");
-	
+	returnButton.addEventListener('click', function(e) {
+		alert(createProfil.reussi);
+	/*		pseudoField.value='';
+           villeField.value='';
+            adressMailField.value='';
+            passwordField.value='' ;        
+			winOpen.open();		
+			winClose.close();*/				
+		
+	});
 	self.add(returnButton);
 	
 	var validateButton = Button("VALIDER");
 	// Connexion
 	validateButton.addEventListener('click', function(e) {
 		var validate=validateForm(pseudoField, villeField, adressMailField, passwordField);
-		if(validate == true){
-			
-			saveUser(pseudoField, villeField, adressMailField, passwordField);
-			
-		}
+		if(validate == true){	
 		
+		saveUser(pseudoField, villeField, adressMailField, passwordField);
+			pseudoField.value='';
+           villeField.value='';
+            adressMailField.value='';
+            passwordField.value='' ;        
+		//	winOpen.open();		
+		//	winClose.close();				
+		}
 	});
 	self.add(validateButton);
 	
@@ -155,9 +174,7 @@ function RegisterView(winClose, winOpen) {
 	return self;
 }
 
-function validateForm(pseudoField, villeField, adressMailField, passwordField){
-	alert(pseudoField.value);
-	
+function validateForm(pseudoField, villeField, adressMailField, passwordField){		
 	if (pseudoField.value == '' || villeField.value == '' || adressMailField.value == '' || passwordField.value == ''){
 		validateForm = false;
 		alert("veuillez remplir tous les champs");
@@ -169,22 +186,75 @@ function validateForm(pseudoField, villeField, adressMailField, passwordField){
 	return validateForm;
 }
 
+
+
+
+
 function saveUser(pseudo, ville, adressMail, password){
-	var db = Ti.Database.open('MobileTalent');	
-	var rows = db.execute('SELECT userPSEUDO FROM users');
-	existPseudo=false;
-	while (rows.isValidRow()) {
-			if(pseudo.value == rows.fieldByName('userPSEUDO'))
-				existPseudo=true;
-			rows.next();
-		}
-		rows.close();
-	if(existPseudo==false){
-		db.execute('INSERT INTO users (userPSEUDO, userVILLE, userPASSW, userMAIL) values (?, ?, ?, ?)', pseudo.value, ville.value, adressMail.value, password.value);
-		
-		alert("fait");
+	
+	var xhr = Titanium.Network.createHTTPClient();
+	if (createProfil.envoie != 'idl') {
+		alert( 'YouTube uploader already in use!');
+		return;
 	}
-	db.close();
+	xhr.onerror = function(e)
+	{			
+		var	err = 'HTTP Error (last state: saveUser) (onerror: ' + e.error + ')';		
+		alert(err);
+	};	
+xhr.onload = function(){
+    
+    switch (createProfil.envoie) {
+    	
+    	case 'fait' :
+    	
+    	 var json = JSON.parse(this.responseText);
+    if (!json) { 
+        alert('Error - Null return!'); 
+        return false;
+    }
+    	alert("ici1");
+    	createProfil.reussi=true;
+    	createProfil.envoie='recu';
+    	   	
+    	break;
+    	
+    	case 'recu' :
+    	
+    	alert("ici2");
+    	if(json.createAccount==true){
+   	alert("compte crée avec succès ");
+   	createProfil.reussi=true;
+   	
+   }
+   	else{
+   	alert("compte existe déja ");
+   	
+   	}	
+   	createProfil.envoie='idl';
+    	break;
+    	
+    	default :
+				Ti.API.info('Unknown state during YouTube upload!');
+				var errormsg = 'Bad state ';
+				Ti.App.fireEvent('youtube:error', {});
+				break;
+    	
+    	
+    }
+    
+};
+	var params = {
+		  	requete:'createUser',
+            pseudoU: pseudo.value,  
+            villeU: ville.value,
+            adressMailU:adressMail.value,
+            passwordU:password.value             
+        };  
+        createProfil.envoie='fait';
+        xhr.open('POST', 'http://ceriyves.byethost7.com/DbAction.php');	
+	xhr.send(params);
+	
 }
 
 

@@ -32,10 +32,10 @@ function BrowseView(winClose,winOpen) {
 		layout: 'horizontal'
 	});
 
-	var logoutButton = Button("Déconnexion", '39%');
+	var logoutButton = Button("Déconnexion", '45%');
 	logoutButton.addEventListener('click', function() {
-	//loginWindow.open();
-	//winClose.close();
+	loginWindow.open();
+	winClose.close();
 		 Ti.UI.createNotification({
         duration: Ti.UI.NOTIFICATION_DURATION_LONG,
         message: 'Saved to: '
@@ -48,19 +48,15 @@ function BrowseView(winClose,winOpen) {
 
 
 
-	var settingsButton = Button("Gérer mon compte", '59%', null, null, '2%');
+	var settingsButton = Button("Gérer mon compte", '45%', null, null, '2%');
 	settingsButton.addEventListener('click', function(e) {
 		self.fireEvent('settingSuccessful', {
 
 		});
 	});
 
+self.add(settingsButton);
 
-	var nameButton = Button("name", '59%', null, null, '2%');
-
-
-	hView.add(settingsButton);
-	self.add(nameButton);
 
 
 	self.add(hView);
@@ -75,21 +71,6 @@ function BrowseView(winClose,winOpen) {
 	});
 	self.add(recordButton);
 
-
-
-	nameButton.addEventListener('click', function() {
-    Ti.UI.createNotification({
-        duration: Ti.UI.NOTIFICATION_DURATION_LONG,
-        message: 'Saved to: '
-    }).show();
-});
-
-
-
-
-
-
-
 	//create object instance, a parasitic subclass of Observable
 	var othersVideosView = Ti.UI.createView({
 		top: '5%',
@@ -98,9 +79,9 @@ function BrowseView(winClose,winOpen) {
 		layout: 'horizontal'
 	});
 
-	var otherRegionsButton = Button("Autres régions", '39%');
+	var otherRegionsButton = Button("Autres régions", '45%');
 	othersVideosView.add(otherRegionsButton);
-	var allVideosButton = Button("Toutes les vidéos", '59%', null, null, '2%');
+	var allVideosButton = Button("Toutes les vidéos", '45%', null, null, '2%');
 	othersVideosView.add(allVideosButton);
 
 	self.add(othersVideosView);

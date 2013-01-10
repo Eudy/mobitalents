@@ -1,7 +1,24 @@
+
+var youtube = {
+	authToken: '',
+	location:  '',
+	developerKey: 'AI39si7AAPQhCNPeKBJ8OorqABACHYd7-3OHbY_MNYPGecDyusF46gDetrl261mNOsPFQI-H4N_B-WVz8s6nkZdRhHKK0NQawQ',
+	state: 'idle',
+	errormsg: '',
+	xhr: null,
+	date:'',
+	name:'',
+	region:''
+};
+
+
 function RecordVideoView() {
     var Theme = require('ui/mobi/Theme');
     var Button = require('ui/mobi/Button');
-
+	var InfoUser = require('ui/mobi/InfoUser');	
+		
+                    
+                  
     //create object instance, a parasitic subclass of Observable
     var self = Ti.UI.createScrollView({
         top: '7.5%',
@@ -18,7 +35,7 @@ function RecordVideoView() {
         height: '80',
         layout: 'horizontal'
     });
-    
+
     var recordButton = Titanium.UI.createButton({
         top: 10,
         left: 10,
@@ -35,7 +52,7 @@ function RecordVideoView() {
     });
     self.add(recordButton);
     var shareButton = Titanium.UI.createButton({
-        top: 50,
+      //  top: 50,
         left: 10,
         right: 10,
         height: 80,
@@ -44,9 +61,37 @@ function RecordVideoView() {
 
     });
     self.add(shareButton);
-    var saveButton = Titanium.UI.createButton({
+   
+    var nameVideoField = Ti.UI.createTextField({
+		color: Theme.textColor,
+		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
+		width: '100%',
+		height: '80',
+		//top: 60,
+		hintText: 'Nom de la video',
+		keyboardType: Ti.UI.KEYBOARD_DEFAULT,
+		visible: false
+	})
 
-        top: 100,
+	self.add(nameVideoField);
+var regionTypeLabel = Ti.UI.createLabel({
+	text: 'Choisissez une région',
+	font: {
+	fontFamily: 'Arial',
+	fontWeight: 'bold',
+	fontSize: 22
+},
+	color:'#a10000',
+	width: '100%',
+	height: 'auto',
+	left: 5,
+	visible: false
+});
+self.add(regionTypeLabel);	
+	
+
+ var saveButton = Titanium.UI.createButton({
+     //   top: 100,
         left: 10,
         right: 10,
         height: 80,
@@ -57,7 +102,6 @@ function RecordVideoView() {
     });
 
     self.add(saveButton);
-
     var videoUri = null;
 
 
@@ -97,9 +141,15 @@ function RecordVideoView() {
                     Ti.UI.createNotification({
                         duration: Ti.UI.NOTIFICATION_DURATION_LONG,
                         message: 'Video enregistrer; partager ou jouer au jeu!'
-                    }).show();              
+                    }).show();
+                    
                     shareButton.visible = true;
+                    
+                    nameVideoField.visible = true;
+                    regionTypeLabel.visible = true;
+                  
                     saveButton.visible = true;
+                    
                 } else {
                     Ti.UI.createNotification({
                         duration: Ti.UI.NOTIFICATION_DURATION_LONG,
@@ -114,6 +164,7 @@ function RecordVideoView() {
 
     });
     shareButton.addEventListener('click', function() {
+    	alert(youtube.authToken);
         var intent = Titanium.Android.createIntent({
             action: Titanium.Android.ACTION_SEND,
             type: 'application/octet-stream'
@@ -127,15 +178,22 @@ function RecordVideoView() {
     });
 
     saveButton.addEventListener('click', function() {
-             var source = Ti.Filesystem.getFile(videoUri);					
+
+        var source = Ti.Filesystem.getFile(videoUri);
+        if (nameVideoField.value == ''){		
+		alert("veuillez renseigner tous les champs");
+	}
+	else{
+		youtube.name=nameVideoField.value;		
 		youtubeUpload (source, self);
 		
+}
         Ti.UI.createNotification({
 
 
             duration: Ti.UI.NOTIFICATION_DURATION_LONG,
 
-            message: 'Saved to: ' 
+            message: 'Saved to: '
         }).show();
 
     });
@@ -190,23 +248,13 @@ function RecordVideoView() {
     footerMentions.add(author);
     footerMentions.add(mentionCeri);
     footer.add(footerMentions);
-
     self.add(footer);
-
     return self;
 };
-var youtube = {	
-	authToken: '',	
-	location:  '',	
-	developerKey: 'AI39si7AAPQhCNPeKBJ8OorqABACHYd7-3OHbY_MNYPGecDyusF46gDetrl261mNOsPFQI-H4N_B-WVz8s6nkZdRhHKK0NQawQ',	
-	state: 'idle',
-	errormsg: '',
-	xhr: null
 
-};
 function youtubeUpload (source1, self)
 {
-	
+var Geo=require('ui/common/Geolocation');
 	var ind=Titanium.UI.createProgressBar({
 	top: 75,
 	width:200,
@@ -223,11 +271,11 @@ function youtubeUpload (source1, self)
 
 self.add(ind);
 ind.show();
-	
-	
-	
-	
-	
+
+
+
+
+
 var i=0;
 	/* Sanity check */
 	if (!youtube.xhr) {
@@ -245,9 +293,9 @@ var i=0;
 
 	xhr.onerror = function(e)
 	{
-		
+
 			//alert('HTTP Error (last state:' + youtube.state + ')' + '(onerror: ' + e.error + ')');
-	
+
 		Ti.API.info('HTTP Error (last state:' + youtube.state + ')' + '(onerror: ' + e.error + ')');
 		youtube.errormsg = 'HTTP Error (last state:' + youtube.state + ')' + '(onerror: ' + e.error + ')';
 		youtube.state = 'error';
@@ -286,22 +334,22 @@ var i=0;
 					xhr.open('POST', 'http://uploads.gdata.youtube.com/resumable/feeds/api/users/talenmobile/uploads');
 					xhr.setRequestHeader('Authorization', 'GoogleLogin auth=' + youtube.authToken);
 					xhr.setRequestHeader('GData-Version', '2');
-					xhr.setRequestHeader('X-GData-Key', 'key=' + youtube.developerKey);					
-					xhr.setRequestHeader('Slug', 'la87.mp4');
-					xhr.setRequestHeader('Content-Type', 'multipart/related; boundary=\"f93dcbA3\"');										
+					xhr.setRequestHeader('X-GData-Key', 'key=' + youtube.developerKey);
+					xhr.setRequestHeader('Slug', youtube.name);
+					xhr.setRequestHeader('Content-Type', 'multipart/related; boundary=\"f93dcbA3\"');
 					xhr.setRequestHeader('Content-Length', '1941255');
 					xhr.setRequestHeader('Connection', 'close');
 					xhr.setRequestHeader('Content-Type', 'application/atom+xml; charset=UTF-8');
 					xhr.setRequestHeader('Content-Type', 'video/mp4');
-					xhr.setRequestHeader('Content-Transfer-Encoding', 'binary');															
+					xhr.setRequestHeader('Content-Transfer-Encoding', 'binary');
 					xhr.send("--f93dcbA3Content-Type: application/atom+xml; charset=UTF-8<?xml version=\"1.0\"?><entry xmlns=\"http://www.w3.org/2005/Atom\"xmlns:media=\"http://search.yahoo.com/mrss/\"xmlns:yt=\"http://gdata.youtube.com/schemas/2007\"><media:group><media:title type=\"plain\">Bad Wedding Toast</media:title><media:description type=\"plain\">I gave a bad toast at my friend's wedding.</media:description><media:categoryscheme=\"http://gdata.youtube.com/schemas/2007/categories.cat\">People</media:category><media:keywords>toast, wedding</media:keywords></media:group></entry>--f93dcbA3--f93dcbA3--");
-					
+
 				}
 
 				break;
 			case 'getlocation' :
-				
-				youtube.location = xhr.getResponseHeader('Location');				
+
+				youtube.location = xhr.getResponseHeader('Location');
 				if (youtube.location != '') {
 
 				ind.value =2;
@@ -320,7 +368,7 @@ var i=0;
 				break;
 			/* Get the returned location */
 			case 'uploading' :
-				Ti.API.info("Got uploading completed....");			
+				Ti.API.info("Got uploading completed....");
 				youtube.state = 'idle';
 				var search = "media:player url='http://www.youtube.com/watch?v=";
 				var shortlink;
@@ -334,9 +382,11 @@ var i=0;
 						shortlink = xhr.responseText.substring(start, end);
 					}
 				}
-				if (shortlink) {				
-					alert("lien vers votre video: http://www.youtube.com/watch?v="+shortlink);
-					ind.value =3;
+				if (shortlink) {
+					alert("lien vers votre video: http://www.youtube.com/watch?v="+shortlink);					
+				//	saveDbVideo(youtube.name, shortlink);
+					var region = new Geo(youtube.name, shortlink);
+					ind.value =3;					
 					ind.hide();
 				}
 				else {
@@ -357,33 +407,15 @@ var i=0;
 	youtube.location = '';
 	xhr.open('POST','https://www.google.com/accounts/ClientLogin');
 	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-	
 	xhr.send({
 		Email: 'talenmobile',
 		Passwd: 'danidjab',
 		service: 'youtube',
-		source: 'youApp',		
+		source: 'youApp'
 	});
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 module.exports = RecordVideoView;

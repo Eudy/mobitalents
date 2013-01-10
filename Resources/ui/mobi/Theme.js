@@ -2,7 +2,7 @@
 function Theme()
 {
 }
-
+Theme.id=0;
 Theme.backgroundColor = '#111111';
 Theme.buttonBackgroundColor = '#a10000';
 Theme.selectedButtonBackgroundColor = '#afd7ed';

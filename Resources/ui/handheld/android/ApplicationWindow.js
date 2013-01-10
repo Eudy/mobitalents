@@ -2,14 +2,14 @@
 function ApplicationWindow() {
 	//load component dependencies
 	var Theme = require('ui/mobi/Theme');
+	var userInfo = require('ui/mobi/InfoUser');	
 	var LoginView = require('ui/common/LoginView');
 	var BrowseView = require('ui/common/BrowseView');
 	var RegisterView = require('ui/common/RegisterView');
-	//var TestView = require('ui/common/TestView');
 	var SettingView = require('ui/common/SettingView');	
 	var RecordVideoView = require('ui/common/RecordVideoView');	
-	var db = Ti.Database.open('MobileTalent');
-db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPSEUDO TEXT, userVILLE INTEGER, userPASSW TEXT, userMAIL TEXT)");
+	
+
 
 	//create component instance
 	var self = Ti.UI.createWindow({
@@ -39,14 +39,18 @@ db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPS
 	});
 	
 	
-	var registerView = new RegisterView(registerWindow, self);
+	var registerView = new RegisterView(registerWindow, Theme.id);
 	
 		
 	// Lorsque la connexion est réussie
 	loginView.addEventListener('loginSuccessful', function(e) {
 		browseWindow.add(browseView);
 		browseWindow.open();
+		
 	});
+	
+	
+	
 	
 	var settingWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,

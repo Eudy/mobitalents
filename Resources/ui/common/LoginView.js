@@ -1,14 +1,19 @@
 //FirstView Component Constructor
+var loginProfil = {
+	idUser: '',
+	envoie:'idl'
+};
 function LoginView() {
 	var Theme = require('ui/mobi/Theme');
 	var Button = require('ui/mobi/Button');
-		
+	//var InfoUser = require('ui/mobi/InfoUser');	
+	var Geo=require('ui/common/Geolocation');
 	//create object instance, a parasitic subclass of Observable
 	var self = Ti.UI.createScrollView({
 		top: '7.5%',
 		left: '5%',
 		width: '90%',
-		height: '95%',
+		height: '100%',
 		layout: 'vertical'
 	});
 	
@@ -44,7 +49,16 @@ function LoginView() {
 	})
 	
 	self.add(loginField);
-
+if (Titanium.Network.online == false)
+{
+        var dlg = Titanium.UI.createAlertDialog({
+        'title' : 'No Network',
+        'message' : 'You are not connected to a network. ',
+        'buttonNames' : [ 'OK' ]
+    });
+    dlg.show();
+//Titanium.App.fireEvent('hide_indicator');
+}
 	var passwordField = Ti.UI.createTextField({
 		color: Theme.textColor,
 		borderStyle: Ti.UI.INPUT_BORDERSTYLE_ROUNDED,
@@ -64,17 +78,11 @@ function LoginView() {
 	loginButton.addEventListener('click', function(e) {
 		logPass=false;
 		if(loginField.value != '' && passwordField != ''){
-			logPass=connexi(loginField, passwordField)
+			connexi(loginField, passwordField,self);
 		}
 		else{
 			alert("Veuillez renseigner tous les champs")
-		}
-	//	logPass = true;
-		if(logPass == true){			
-		self.fireEvent('loginSuccessful', {
-			
-		});
-		}
+		}	
 	});
 	self.add(loginButton);
 	
@@ -88,10 +96,10 @@ function LoginView() {
 	self.add(createAccountButton);
 	
 	var videoButton = Button("video");
-	videoButton.addEventListener('click', function(e) {
-		self.fireEvent('videoSuccessful', {
-			
-		});
+	videoButton.addEventListener('click', function(e) {	 	
+		var geo= new Geo();
+		alert(geo);
+		//self.fireEvent('videoSuccessful', {});
 	});
 	
 	self.add(videoButton);
@@ -156,21 +164,60 @@ function LoginView() {
 	return self;
 }
 
-function connexi(login, password){
-	var db = Ti.Database.open('MobileTalent');	
-	var rows = db.execute('SELECT userPSEUDO, userPASSW FROM users');
-	logPass=false;
-	while (rows.isValidRow()) {
-		/*alert("pseudo "+rows.fieldByName('userPSEUDO')+" passW="+rows.fieldByName('userPASSW'));
-		alert("pseudo1 "+login.value+" passW1="+password.value);*/
-			if(login.value == rows.fieldByName('userPSEUDO') && password.value == rows.fieldByName('userPASSW'))
-				logPass=true;
-			rows.next();
-		}
-		rows.close();
+function connexi(login, password, self){
+	var InfoUser = require('ui/mobi/InfoUser');
+	var xhr = Titanium.Network.createHTTPClient();
 	
-	db.close();
-	return logPass;
+	if (loginProfil.envoie != 'idl') {
+		alert( 'YouTube uploader already in use!');
+		return;
+	}
+		xhr.onerror = function(e)
+	{
+		var	err = 'HTTP Error (last state: saveUser) (onerror: ' + e.error + ')';
+		alert(err);
+	};
+	
+xhr.onload = function(){
+	
+	 switch (loginProfil.envoie) {
+	 	case 'fait' :
+	 	 var json = JSON.parse(this.responseText);
+    if (!json) {
+        alert('Error - Null return!');
+        return false;
+    }
+    	 if(json.logged==true){
+   
+   	InfoUser.id=json.id;
+   	InfoUser.pseudo=json.pseudo;
+self.fireEvent('loginSuccessful', {});
+}
+   	else
+   	alert("existe bad ");
+	 	break;
+	 	
+	 	default :
+				Ti.API.info('Unknown state during YouTube upload!');
+				var errormsg = 'Bad state ';
+				Ti.App.fireEvent('youtube:error', {});
+		break;
+	 };
+
+
+    
+  
+   
+};
+
+	var params = {
+		  	requete:'login',
+            pseudoU: login.value,  
+            passW: password.value 
+        };  
+     loginProfil.envoie='fait';   
+    xhr.open('POST', 'http://ceriyves.byethost7.com/DbAction.php');    
+	xhr.send(params);						
 }
 
 

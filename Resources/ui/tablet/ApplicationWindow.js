@@ -8,10 +8,9 @@ function ApplicationWindow() {
 	var RegisterView = require('ui/common/RegisterView');
 	var SettingView = require('ui/common/SettingView');	
 	var RecordVideoView = require('ui/common/RecordVideoView');	
-	var db = Ti.Database.open('MobileTalent');
-db.execute("CREATE TABLE IF NOT EXISTS users (userID INTEGER PRIMARY KEY, userPSEUDO TEXT, userVILLE INTEGER, userPASSW TEXT, userMAIL TEXT)");
-db.execute("CREATE TABLE IF NOT EXISTS videos (videoID INTEGER PRIMARY KEY, videoNAME TEXT, videoUSERID INTEGER,videoREGION TEXT, videoVOTE INTEGER, videoVALIDATE INTEGER, videoLIEN TEXT, videoDate DATE, FOREIGN KEY(videoUSERID) REFERENCES users(userID))");
-
+	
+	var userSession = JSON.parse(Ti.App.Properties.getString("userSession"));	
+	
 	//create component instance
 	var self = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
@@ -20,9 +19,11 @@ db.execute("CREATE TABLE IF NOT EXISTS videos (videoID INTEGER PRIMARY KEY, vide
 	});
 		
 	//construct UI
-	var loginView = new LoginView();
-	self.add(loginView);
-	
+	var loginWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor
+	});
+	var loginView = new LoginView(loginWindow, self);
+	loginWindow.add(loginView);
 	
 	var browseWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
@@ -31,7 +32,7 @@ db.execute("CREATE TABLE IF NOT EXISTS videos (videoID INTEGER PRIMARY KEY, vide
 	});
 	
 	var browseView = new BrowseView(browseWindow, self);
-	
+	browseWindow.add(browseView);
 	
 	var registerWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
@@ -40,13 +41,27 @@ db.execute("CREATE TABLE IF NOT EXISTS videos (videoID INTEGER PRIMARY KEY, vide
 	});
 	
 	
-	var registerView = new RegisterView(registerWindow, self);
-	
+	var registerView = new RegisterView(registerWindow, Theme.id);
 		
 	// Lorsque la connexion est réussie
-	loginView.addEventListener('loginSuccessful', function(e) {
-		browseWindow.add(browseView);
-		browseWindow.open();
+	loginView.addEventListener('loginSuccessful', function(user) {
+		// Si l'utilisateur n'a pas enregistré ses informations de connexion
+		if(!userSession) {
+			// On sauvegarde dans les propriétés que la connexion est réussie
+			Ti.App.Properties.setString("userSession", JSON.stringify(user));
+		}
+		browseWindow.open(); 
+		
+	});
+	
+	// Lorsque la deconnexion est réussie
+	browseView.addEventListener('logoutSuccessful', function() {
+		if(userSession) {
+			// On sauvegarde dans les propriétés que la connexion est réussie
+			Ti.App.Properties.removeProperty("userSession");
+		}
+		loginWindow.add(loginView);
+		loginWindow.open();
 	});
 	
 	var settingWindow = Ti.UI.createWindow({
@@ -112,9 +127,12 @@ db.execute("CREATE TABLE IF NOT EXISTS videos (videoID INTEGER PRIMARY KEY, vide
 	});*/
 	
 	
-	
-	
-
+	// Si l'utilisateur est déjà logué on l'amene a la page des vidéos
+	if(userSession!=null) {
+		browseWindow.open();
+	} else {
+		loginWindow.open();
+	}
 	
 	return self;
 }

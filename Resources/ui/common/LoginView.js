@@ -24,8 +24,13 @@ function LoginView() {
 	});
 	self.add(logo);	
 	
-	
-	
+	var createAccountButton = Button("Créer un compte Mobitalent");
+	createAccountButton.addEventListener('click', function(e) {
+		self.fireEvent('createAccountSuccessful', {
+			
+		});
+	});
+	self.add(createAccountButton);
 	
 	//create object instance, a parasitic subclass of Observable
 	var hView = Ti.UI.createView({
@@ -85,26 +90,6 @@ if (Titanium.Network.online == false)
 		}	
 	});
 	self.add(loginButton);
-	
-	var createAccountButton = Button("Créer un compte Mobitalent");
-	createAccountButton.addEventListener('click', function(e) {
-		self.fireEvent('createAccountSuccessful', {
-			
-		});
-	});
-	
-	self.add(createAccountButton);
-	
-	var videoButton = Button("video");
-	videoButton.addEventListener('click', function(e) {	 	
-		var geo= new Geo();
-		alert(geo);
-		//self.fireEvent('videoSuccessful', {});
-	});
-	
-	self.add(videoButton);
-	
-	
 	
 	
 	Ti.Facebook.addEventListener('login', function(e) {
@@ -191,7 +176,7 @@ xhr.onload = function(){
    
    	InfoUser.id=json.id;
    	InfoUser.pseudo=json.pseudo;
-self.fireEvent('loginSuccessful', {});
+	self.fireEvent('loginSuccessful', {id:json.id, pseudo:json.pseudo});
 }
    	else
    	alert("existe bad ");

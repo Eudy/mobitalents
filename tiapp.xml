@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <property name="acs-oauth-secret-production" type="string">4QN9zvQ8QWuAsbOq9YIMV3tweeSf1mF7</property>
-    <property name="acs-oauth-key-production" type="string">GdSE8aFodJjLi813Qvr6EjtFI9M6RwfP</property>
-    <property name="acs-api-key-production" type="string">kI3fDDQYq2kiMcxYM3zZ64tyEKMEq8FX</property>
-    <property name="acs-oauth-secret-development" type="string">53JorekIQqOddKzRVKa25JVN7H6Npmvy</property>
-    <property name="acs-oauth-key-development" type="string">XmIAnGvt6ndcaTKI6frbwzpHPn85eJhY</property>
-    <property name="acs-api-key-development" type="string">1AEaq7jWPxC6xi0OuOUjIC5DNJTWBGro</property>
+    <property name="acs-oauth-secret-production" type="string">g56QAyAFFvIDT6jLEFSzxAl8Q7DMHndf</property>
+    <property name="acs-oauth-key-production" type="string">fv8jVWPzlDIGwtDYUscerpHM2AwcxJo9</property>
+    <property name="acs-api-key-production" type="string">r4ZidpOnAzXSGtr30hIcW8vlWrQKk4gh</property>
+    <property name="acs-oauth-secret-development" type="string">BcFH1MrYW79tM7G03ykT8RjFCM5qEuH4</property>
+    <property name="acs-oauth-key-development" type="string">j7olhaKemBafJBtJQet6bBhpZ8pJtUnu</property>
+    <property name="acs-api-key-development" type="string">Wq0BofBvKmRrs5sqxzXFIpcwUKhgjavE</property>
     <deployment-targets>
         <target device="mobileweb">true</target>
         <target device="iphone">false</target>
@@ -17,10 +17,10 @@
     <id>ceri.dsdb.mobitalents</id>
     <name>Mobitalents</name>
     <version>1.0</version>
-    <publisher>Daniel</publisher>
+    <publisher>djaber</publisher>
     <url>http://</url>
     <description>not specified</description>
-    <copyright>2012 by Daniel</copyright>
+    <copyright>2012 by djaber</copyright>
     <icon>appicon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
@@ -29,7 +29,7 @@
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
     <analytics>true</analytics>
-    <guid>5f76c305-be8f-4145-901b-30ddff9bc317</guid>
+    <guid>56753192-395f-4d98-8e28-4c060699bf25</guid>
     <property name="ti.ui.defaultunit">system</property>
     <iphone>
         <orientations device="iphone">
@@ -44,12 +44,9 @@
     </iphone>
     <android xmlns:android="http://schemas.android.com/apk/res/android">
         <tool-api-level>8</tool-api-level>
-        
         <manifest android:installLocation="preferExternal">
             <uses-sdk android:minSdkVersion="8"/>
-            
-  
-  <uses-permission android:name="android.permission.CAMERA" />
+            <uses-permission android:name="android.permission.CAMERA"/>
         </manifest>
     </android>
     <mobileweb>
@@ -61,6 +58,6 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="commonjs" version="2.3.0">ti.cloud</module>
+        <module platform="android" version="2.2.1">ti.paypal</module>
     </modules>
 </ti:app>

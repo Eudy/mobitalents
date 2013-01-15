@@ -2,19 +2,13 @@ var saveVideo = {
 	envoie:'idl'
 };
 
-
-
-
-
 function SaveVideo(name, lien, region){
-	//INSERT INTO matable (date) VALUES (NOW()) 
+
 	var InfoUser = require('ui/mobi/InfoUser');	
-	/*var Geo=require('ui/common/Geolocation');	
-	var region = new Geo();*/
-	alert("address "+InfoUser.region);
+	
+	//alert("address "+InfoUser.region);
  var InfoUser = require('ui/mobi/InfoUser');
 	var xhr = Titanium.Network.createHTTPClient();
-//	alert("ici");
 	if (saveVideo.envoie != 'idl') {
 		alert( 'YouTube uploader already in use!');
 		return;
@@ -26,7 +20,7 @@ function SaveVideo(name, lien, region){
 	};
 
 xhr.onload = function(){
-	//alert("ici onload");
+	
 	 switch (saveVideo.envoie) {
     	case 'fait' :
     	 var json = JSON.parse(this.responseText);

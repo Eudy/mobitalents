@@ -2,20 +2,19 @@
 function ApplicationWindow() {
 	//load component dependencies
 	var Theme = require('ui/mobi/Theme');
-	var userInfo = require('ui/mobi/InfoUser');	
+	var InfoUser = require('ui/mobi/InfoUser');
 	var LoginView = require('ui/common/LoginView');
 	var BrowseView = require('ui/common/BrowseView');
 	var RegisterView = require('ui/common/RegisterView');
 	var SettingView = require('ui/common/SettingView');	
 	var RecordVideoView = require('ui/common/RecordVideoView');	
-	
-	var userSession = JSON.parse(Ti.App.Properties.getString("userSession"));	
+	var AchatVoteView = require('ui/common/AchatVoteView');	
+	var VoirVideoView = require('ui/common/VoirVideo');	
 	
 	//create component instance
 	var self = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
-		//navBarHidden:true,
-		//exitOnClose:true
+		height: '400',
 	});
 		
 	//construct UI
@@ -24,6 +23,11 @@ function ApplicationWindow() {
 	});
 	var loginView = new LoginView(loginWindow, self);
 	loginWindow.add(loginView);
+	
+	
+	
+	
+	
 	
 	var browseWindow = Ti.UI.createWindow({
 		backgroundColor: Theme.backgroundColor,
@@ -44,24 +48,13 @@ function ApplicationWindow() {
 	var registerView = new RegisterView(registerWindow, Theme.id);
 		
 	// Lorsque la connexion est réussie
-	loginView.addEventListener('loginSuccessful', function(user) {
-		// Si l'utilisateur n'a pas enregistré ses informations de connexion
-		if(!userSession) {
-			// On sauvegarde dans les propriétés que la connexion est réussie
-			Ti.App.Properties.setString("userSession", JSON.stringify(user));
-		}
+	loginView.addEventListener('loginSuccessful', function(e) {
+		var userInfo = require('ui/mobi/InfoUser');	
+		InfoUser.id=e.id;
+   	InfoUser.pseudo=e.pseudo;
+		browseWindow.add(browseView);
 		browseWindow.open(); 
 		
-	});
-	
-	// Lorsque la deconnexion est réussie
-	browseView.addEventListener('logoutSuccessful', function() {
-		if(userSession) {
-			// On sauvegarde dans les propriétés que la connexion est réussie
-			Ti.App.Properties.removeProperty("userSession");
-		}
-		loginWindow.add(loginView);
-		loginWindow.open();
 	});
 	
 	var settingWindow = Ti.UI.createWindow({
@@ -70,6 +63,34 @@ function ApplicationWindow() {
 	//	exitOnClose:false
 	});
 	var settingView = new SettingView(settingWindow, browseWindow);
+	
+	var voirVideoWindow = Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		//navBarHidden:true,
+	//	exitOnClose:false
+	});
+	var voirVideoView = new VoirVideoView(voirVideoWindow, browseWindow);
+	browseView.addEventListener('voirvideo', function(e) {
+		voirVideoWindow.add(voirVideoView);
+		voirVideoWindow.open();
+	});
+	
+	
+	
+	
+	var achatVoteWindow= Ti.UI.createWindow({
+		backgroundColor: Theme.backgroundColor,
+		//navBarHidden:true,
+	//	exitOnClose:false
+	});
+	
+	var achatVoteView= new AchatVoteView(achatVoteWindow, browseWindow)
+	browseView.addEventListener('achatVoteSuccessful', function(e) {
+		achatVoteWindow.add(achatVoteView);
+		achatVoteWindow.open();
+	});
+	
+	
 	
 	
 	browseView.addEventListener('settingSuccessful', function(e) {
@@ -105,34 +126,16 @@ function ApplicationWindow() {
 		recordWindow.add(recordView);
 		recordWindow.open();
 	});
-	
-	/*var testView = new TestView();
-	var testWindow = Ti.UI.createWindow({
-		backgroundColor: Theme.backgroundColor,
-		navBarHidden:true,
-		exitOnClose:true
-	});*/
-	
+		
 	registerView.addEventListener('testSuccessful', function(e) {
 		//alert('ICI2');
 		testWindow.add(testView);
 		testWindow.open();
 	});
 	
-	/*testView.addEventListener('logoutSuccessful', function(e) {
-		alert('ICI2');
-		//registerWindow.close();
-		registerWindow.add(registerView);
-		registerWindow.show();
-	});*/
 	
-	
-	// Si l'utilisateur est déjà logué on l'amene a la page des vidéos
-	if(userSession!=null) {
-		browseWindow.open();
-	} else {
 		loginWindow.open();
-	}
+	
 	
 	return self;
 }

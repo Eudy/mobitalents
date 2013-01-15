@@ -180,6 +180,8 @@ xhr.onload = function(){
 }
    	else
    	alert("existe bad ");
+   	loginProfil.envoie="idl";
+   	
 	 	break;
 	 	
 	 	default :
@@ -194,7 +196,6 @@ xhr.onload = function(){
   
    
 };
-
 	var params = {
 		  	requete:'login',
             pseudoU: login.value,  
